@@ -1,0 +1,44 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    title Chat
+    link(
+        rel='stylesheet', 
+        href='https://use.fontawesome.com/releases/v5.1.0/css/all.css', 
+        integrity='sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt',
+        crossorigin='anonymous'
+        )
+    script(src='//code.jquery.com/jquery-1.11.1.min.js')
+    script(src='//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js')
+    link#bootstrap-css(href='//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css', rel='stylesheet')
+    link(rel='stylesheet', href='css/main.css')
+  body
+    .container
+      .row
+        .panel.panel-primary
+          .panel-heading
+            span.glyphicon.glyphicon-comment
+            |  Chat
+            span#logout-btn  Logout
+
+          ul#users-list.users-list.col-md-3
+          
+          .col-md-9.chat-body-wrp
+            ul#msg-list.chat.panel-body
+  
+            .panel-footer
+              form#send-msg-form
+                #input-nickname-tab.input-nickname-tab
+                  ul.users-list#users-list-tab
+                .input-group
+                  input#btn-input.form-control.input-sm(
+                    name='msgInput', type='text', placeholder='Type your message here...',autocomplete="off"
+                   )
+                  span.input-group-btn
+                    button#send-msg-btn.btn.btn-warning.btn-sm(type='submit')
+                      | Send
+
+    script(type='text/javascript').
+      var currentUser = !{JSON.stringify(currentUser)}
+    script(src='js/chat.js')

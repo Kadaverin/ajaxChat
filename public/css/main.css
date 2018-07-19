@@ -1,0 +1,149 @@
+.chat
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.panel-heading{
+    background-color: #06738f !important
+}
+.input-nickname-tab{
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    min-width: 300px;
+    z-index: 10000;
+    bottom: 60px;
+    right : 80px;
+    left: 30px;
+    overflow-y: scroll;
+    top : 100px;
+    background: #fff;
+    line-height: 1.4rem;
+    box-shadow: 0 5px 10px rgba(0,0,0,.12);
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,.15);
+    padding: 2rem;
+}
+
+.chat li
+{
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    /*border-bottom: 1px dotted #B3A9A9;*/
+}
+
+.chat-body{
+    /*background-color: #f3f5f9;*/
+    background-color: #ebebeb;
+    border: 1px solid white;
+    border-radius: 8px;
+    padding: 1rem;
+}
+.chat li.left .chat-body
+{
+    margin-left: 50%;
+}
+
+.chat li.right .chat-body
+{
+    margin-right: 50%;
+}
+
+
+.chat li .chat-body p
+{
+    margin-bottom: 0.5rem;
+    /*color: #777777;*/
+}
+
+.header{
+    margin-top: 0.5rem;
+}
+
+.panel .slidedown .glyphicon, .chat .glyphicon
+{
+    margin-right: 5px;
+}
+
+.panel-body
+{
+    height: 600px;
+    overflow-y: scroll;
+}
+
+.chat-body-wrp{
+    padding-right: 0;
+}
+
+#msg-list .msg-for-current-user{
+    background-color: #05728f;
+    color: white;
+}
+#msg-list .msg-for-current-user small{
+    color: white;
+}
+
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar
+{
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+}
+
+.users-list{
+    list-style: none;
+    padding: 0;
+}
+
+.users-list li{
+
+    display: flex;
+    align-items: center;
+    /*margin-top: 1rem;*/
+}
+.users-list li span.nick{
+    color: lightseagreen;
+}
+
+.users-list li:hover .content{
+    background-color: #099c9e;;
+    cursor: pointer
+}
+
+.users-list li:hover span{
+    color: white;
+}
+.users-list li .content{
+    border: 5px solid white;
+    border-radius: 5px;
+    font-size: 1.6rem;
+    background-color: #f6f6f6;
+    padding: 1rem;
+    padding-left: 2rem;
+    width: 100%;
+    height: 100%;
+}
+
+.msg-for-current-user{
+
+   background-color: #f6f6f6;
+}
+
+#logout-btn{
+    float: right;
+    cursor: pointer;
+    display: block;
+}

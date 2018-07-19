@@ -1,0 +1,54 @@
+doctype html
+html(lang='en')
+  head
+    script(src='//code.jquery.com/jquery-1.11.1.min.js')
+    script(src='//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js')
+    link#bootstrap-css(href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css', rel='stylesheet')
+  body
+    .container
+      .row
+        .span12
+          #loginModal
+            h3 Welcome to chat!
+            .well.justify-content-center
+              ul.nav.nav-tabs
+                li
+                  a(href='#login', data-toggle='tab') Login
+                li.active
+                  a(href='#register', data-toggle='tab') Register
+              #myTabContent.tab-content
+                #login.tab-pane.fade
+                  form(action='/login', method='POST')
+                    fieldset
+                      #legend
+                        legend Login
+                      .control-group
+                        label.control-label(for='nickname') nickname
+                        .controls
+                          input#nickname.input-xlarge(type='text', name='nickname', placeholder='')
+                      .control-group
+                        label.control-label(for='password') Password
+                        .controls
+                          input#password.input-xlarge(type='password', name='password', placeholder='')
+                      .control-group
+                        .controls
+                          button.btn.btn-success Login
+                #register.tab-pane.active.in
+                  form#tab(method='POST', action='/register')
+                    fieldset
+                      #legend
+                        legend Registrer
+                      .control-group
+                        label.control-label(for='register_nickname') nickname
+                        .controls
+                          input#register_nickname.input-xlarge(type='text', name='nickname', placeholder='')
+                      .control-group
+                        label.control-label(for='password') Name
+                        .controls
+                          input#name.input-xlarge(type='password', name='name', placeholder='')
+                      .control-group
+                        label.control-label(for='register_password') Password
+                        .controls
+                          input#register_password.input-xlarge(type='password', name='password', placeholder='')
+                      div
+                        button.btn.btn-primary register
