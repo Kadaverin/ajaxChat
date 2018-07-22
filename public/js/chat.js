@@ -5,14 +5,18 @@
   const userList = document.getElementById('users-list');
   const messageList = document.getElementById('msg-list')
   const sendMsgForm = document.getElementById('send-msg-form')
-  const inputNickTab = document.getElementById('input-nickname-tab')
+  const selectDirectTab = document.getElementById('input-nickname-tab')
   const usersListTab = document.getElementById('users-list-tab');
   const msgInput = document.getElementById('btn-input');
-  let selectedNickForDirectMsg = null;
-  let usersArr = []
-  let prevScrollPos = null;
 
-  inputNickTab.addEventListener('click', handleSelectNickForDirect);
+  const appState = {
+    usersArr: [],
+    selectedNickForDirectMsg: null
+  }
+
+
+
+  selectDirectTab.addEventListener('click', handleSelectNickForDirect);
   msgInput.addEventListener('input', handleMsgInput);
   sendMsgForm.addEventListener('submit', handleSendMessage);
   userList.addEventListener('click', handleSelectNickForDirect);
@@ -24,27 +28,6 @@
     .then(res => {
       window.location = res.url
     })
-  }
-
-
-  function handleSelectNickForDirect() {
-    if (event.target.classList.contains('content')) {
-      selectedNickForDirectMsg = event.target.children[1].innerText.slice(1);
-    } else if (event.target.tagName = 'SPAN') {
-      selectedNickForDirectMsg = event.target.parentNode.children[1].innerText.slice(1);
-    } else return;
-
-    let text = msgInput.value;
-    let startIndex = text.indexOf('@');
-    let spaceIndex = text.indexOf(" ", startIndex);
-    if (spaceIndex === -1) {
-      text = text.replace(text.slice(startIndex), "@" + selectedNickForDirectMsg);
-    } else {
-      text = text.replace(text.substr(startIndex, spaceIndex), "@" + selectedNickForDirectMsg);
-    }
-    msgInput.value = text;
-    inputNickTab.style.display = 'none';
-    msgInput.focus();
   }
 
   function createUserLiNode(userObj) {
@@ -60,62 +43,95 @@
   }
 
 
-  function handleShowUsersForDirectMsg(matchedUsers) {
-    selectedNickForDirectMsg = null;
-    usersListTab.innerHTML = ``
-    matchedUsers.forEach(user => {
-      li = createUserLiNode(user)
-      usersListTab.appendChild(li)
-    })
-    inputNickTab.style.display = 'block'
-  }
-
-  function substractNickFromString(str) {
-    return str.includes(" ") ? str.slice(1, str.indexOf(' ')) : str.slice(1)
-  }
-
-  function handleMsgInput() {
+   function handleMsgInput() {
     let usrWantsSendDirectMsgRegExp = /@(.*)/
     let matched = this.value.match(usrWantsSendDirectMsgRegExp)
     if (matched) {
       let partOfNick = substractNickFromString(matched[0])
       let nickRegExp = new RegExp(partOfNick, 'i')
 
-      matchedUsers = usersArr.filter(user => {
+      matchedUsers = appState.usersArr.filter(user => {
         return nickRegExp.test(user.nickname)
       })
-      switch (matchedUsers.length) {
+
+      handleShowSelectDirectTab(matchedUsers, partOfNick)
+
+    } else hideSelectDirectTab()
+  }
+
+  function substractNickFromString(str) {
+    return str.includes(" ") ? str.slice(1, str.indexOf(' ')) : str.slice(1)
+  }
+
+
+  function handleShowSelectDirectTab(usersThatMatchedToInput, searchPattern){
+    switch (usersThatMatchedToInput.length) {
         case 1:
           {
-            if (matchedUsers[0].nickname == partOfNick) {
-              inputNickTab.style.display = 'none'
+            if (usersThatMatchedToInput[0].nickname === searchPattern) {
+              hideSelectDirectTab();
             } else {
-              handleShowUsersForDirectMsg(matchedUsers)
+              showUsersForDirectMsg(usersThatMatchedToInput);
             }
-            break
+            break;
           }
         case 0:
           {
-            inputNickTab.style.display = 'none'
-            selectedNickForDirectMsg = null;
-            break
+            hideSelectDirectTab();
+            appState.selectedNickForDirectMsg = null;
+            break;
           }
-        default:
-          {
-            handleShowUsersForDirectMsg(matchedUsers)
-          }
+        default: showUsersForDirectMsg(usersThatMatchedToInput);
       }
-    } else inputNickTab.style.display = 'none'
   }
+
+  function hideSelectDirectTab(){
+    selectDirectTab.style.display = 'none';
+  }
+
+  function handleSelectNickForDirect() {
+    if (event.target.classList.contains('content')) {
+      appState.selectedNickForDirectMsg = event.target.children[1].innerText.slice(1);
+    } else if (event.target.tagName = 'SPAN') {
+      appState.selectedNickForDirectMsg = event.target.parentNode.children[1].innerText.slice(1);
+    } else return;
+
+    insertSelectedNickIntoMsgInput()
+    hideSelectDirectTab();
+    msgInput.focus();
+  }
+
+  function insertSelectedNickIntoMsgInput(){
+    let text = msgInput.value;
+    let startIndex = text.indexOf('@');
+    let spaceIndex = text.indexOf(" ", startIndex);
+    if (spaceIndex === -1) {
+      text = text.replace(text.slice(startIndex), "@" + appState.selectedNickForDirectMsg);
+    } else {
+      text = text.replace(text.substr(startIndex, spaceIndex), "@" + appState.selectedNickForDirectMsg);
+    }
+    msgInput.value = text;
+  }
+
+  function showUsersForDirectMsg(matchedUsers) {
+    appState.selectedNickForDirectMsg = null;
+    usersListTab.innerHTML = ``
+    matchedUsers.forEach(user => {
+      li = createUserLiNode(user)
+      usersListTab.appendChild(li)
+    })
+    selectDirectTab.style.display = 'block'
+  }
+
 
 
   function handleSendMessage() {
     event.preventDefault();
     let text = msgInput.value.trim();
     let receiverNick = null;
-    if (selectedNickForDirectMsg) {
-      text = text.replace(`@${selectedNickForDirectMsg}`, '')
-      receiverNick = selectedNickForDirectMsg
+    if (appState.selectedNickForDirectMsg) {
+      text = text.replace(`@${appState.selectedNickForDirectMsg}`, '')
+      receiverNick = appState.selectedNickForDirectMsg
     }
     if (!text) return;
 
@@ -140,17 +156,16 @@
       .then(data => {
         data.json()
           .then(msgs => {
-            prevScrollPos = messageList.scrollTop;
+            let prevScrollPos = messageList.scrollTop;
             let shouldScroll = (messageList.scrollTop + messageList.clientHeight === messageList.scrollHeight);
             messageList.innerHTML = '';
 
-            for (let i = 0; i < msgs.length; i++) {
-              let pos = (i % 2 == 0) ? 'left' : 'right';
-              let li = createMsgLiNode(msgs[i], pos);
+            for (let i = msgs.length - 1 ; i >= 0; i--) {
+              let li = createMsgLiNode(msgs[i]);
               messageList.appendChild(li);
             }
 
-            handleScrollMsgList(shouldScroll);
+            handleScrollMsgList(shouldScroll, prevScrollPos);
           })
       })
       .catch(err => {
@@ -158,13 +173,13 @@
       })
   }
 
-  function handleScrollMsgList(shouldScroll) {
+  function handleScrollMsgList(shouldScroll,prevScrollPos) {
     messageList.scrollTop = shouldScroll ? messageList.scrollHeight : prevScrollPos;
   }
 
   function createMsgLiNode(msgObj, position) {
     let li = document.createElement('li')
-    li.classList.add(position, 'clearfix')
+    li.classList.add('clearfix')
     let msgBodyClass = '';
     if (msgObj.receiverNick == currentUser.nickname) {
       msgBodyClass = 'msg-for-current-user'
@@ -172,10 +187,10 @@
     li.innerHTML = `  
                   <div class="chat-body clearfix ${msgBodyClass} ">
                       <div class="header">
-                          <strong class="primary-font">${ msgObj.senderName }(${ msgObj.senderNick })</strong> 
+                          <strong class="primary-font">${ msgObj.senderName } (@${ msgObj.senderNick })</strong> 
                           <small class="pull-right text-muted">
                               <span class="glyphicon glyphicon-time"></span>
-                              ${ (new Date(msgObj.createdAt)).toUTCString() }
+                              ${ (new Date(msgObj.createdAt))}
                           </small>
                       </div>
                       <p>${ msgObj.text }</p>
@@ -189,7 +204,7 @@
       .then(res => {
         res.json()
           .then(users => {
-            usersArr = users;
+            appState.usersArr = users;
             userList.innerHTML = ``;
 
             for (let i = 0; i < users.length; i++) {
@@ -216,3 +231,45 @@
   }, 500)
 
 })()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+//     function createSelectUserListItem(userObj) {
+//     // <i class="fa fa-circle" aria-hidden="true" style='color: green'></i>
+//     let li = document.createElement('li');
+//     li.classList.add('select-user-item');
+//     li.innerHTML = ` 
+//             <div class="content">
+//                 <span class="name">${ userObj.name }</span>
+//                 <span class = 'nick'>@${ userObj.nickname }</span>
+//             </div>
+//         `;
+//     return li;
+//   }
+
+

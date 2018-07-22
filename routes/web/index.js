@@ -5,7 +5,7 @@ const User = require('../../models/user')
 
 module.exports = function(app){
     app.get('/', (req, res, next) => {
-      if (req.isAuthenticated()) res.redirect('chat')
+      if (req.isAuthenticated()) return res.redirect('chat')
       res.render("home" );
     }) 
 
