@@ -8,7 +8,7 @@ class MessageRepository extends Repository {
   }
 
   getLastMessages(amount, callback){
-    this.model.find().sort( {"created_at" : -1}).limit(amount).exec(callback)
+    this.model.find().sort( {"createdAt" : -1}).limit(amount).exec(callback)
   }
 }
 
